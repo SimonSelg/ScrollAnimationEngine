@@ -1,0 +1,37 @@
+{
+  "name": "scroll-animation-engine",
+  "version": "0.0.1",
+  "description": "Engine to register performant animations that are driven by scroll",
+  "main": "lib/scroll-animation-engine.js",
+  "module": "src/index.js",
+  "repository": "git@github.com:SimonSelg/ScrollAnimationEngine.git",
+  "author": "Simon Selg",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-loader": "^8.0.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "float-equal": "^1.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-nesting": "^6.0.0",
+    "postcss-preset-env": "^5.3.0",
+    "style-loader": "^0.23.0",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.7"
+  },
+  "scripts": {
+    "build": "webpack --mode=production",
+    "demo:build": "pushd demo; webpack --mode=production",
+    "demo:start": "pushd demo; webpack-dev-server --mode=development;popd"
+  },
+  "dependencies": {
+    "framesync": "^3.1.9",
+    "stylefire": "^2.0.7"
+  }
+}
