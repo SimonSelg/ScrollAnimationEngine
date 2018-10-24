@@ -7,3 +7,6 @@ Originally part of an animated header which transitioned from a big state to a s
 Code is not yet as clean and well structured as I'd like to have it, but it works.
 
 Let's see where this project goes.
+
+
+Demo: https://raw.githack.com/SimonSelg/ScrollAnimationEngine/master/demo/dist/index.html
