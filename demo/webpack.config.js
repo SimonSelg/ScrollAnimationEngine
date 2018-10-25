@@ -38,7 +38,8 @@ module.exports = {
     },
     plugins: [
       new HtmlWebpackPlugin({
-          template: 'src/index.html'
+          template: 'src/index.html',
+          title: 'Scroll Animation Engine Demo'
       }),
       new cleanWebpackPlugin()
     ],
