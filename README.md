@@ -25,6 +25,24 @@ git clone git@github.com:SimonSelg/ScrollAnimationEngine.git && cd ScrollAnimati
 git worktree add demo/dist gh-pages
 ```
 
+Currently the library `stylefire` has a bug: https://github.com/Popmotion/popmotion/pull/588
+
+To fix it until my PR is merged:
+
+```bash
+# clone my fork
+git clone git@github.com:SimonSelg/popmotion.git
+cd popmotion
+# build and linke framesync
+cd packages/framesync && yarn build && yarn link 
+# build and link stylefire
+cd ../stylefire && yarn build && yarn link
+
+# make ScrollAnimationEngine use our build
+cd <ScrollAnimationEngine folder>
+yarn link framesync stylefire
+```
+
 ### Yarn/npm scripts
 - `yarn demo:start` starts the dev server
 - `yarn demo:build` builds the demo in demo/dist

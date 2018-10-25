@@ -1,11 +1,7 @@
 import floatEqual from 'float-equal'
 import styler from 'stylefire'
 
-import {
-    onFrameUpdate,
-    onFrameRender,
-    currentTime
-} from 'framesync'
+import sync from 'framesync'
 
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
@@ -27,12 +23,12 @@ class ScrollAnimationEngine {
         this.lastTrackedScrollPosition = window.pageYOffset
     }
 
-    animationRenderLoop = () => {
+    animationRenderLoop = ({timestamp}) => {
         const lastScroll = this.lastTrackedScrollPosition
         const scroll = window.pageYOffset
         const scrollDelta = scroll - lastScroll
         const scrollDirection = Math.sign(scrollDelta)
-        const nowTime = currentTime()
+        const nowTime = timestamp
 
         // handle change in scroll position
         if (scrollDirection === 0) {
@@ -48,6 +44,8 @@ class ScrollAnimationEngine {
             this.lastTrackedScrollTimestamp = nowTime
         }
 
+        // console.info(`processing scroll delta of ${scrollDelta}, ${scroll}, ${lastScroll}`)
+
         // animations itself
         let scrollAreaStart = scrollDirection === 1 ? lastScroll : scroll
         let scrollAreaEnd = scrollDirection === 1 ? scroll : lastScroll
@@ -56,6 +54,7 @@ class ScrollAnimationEngine {
             const dragDistance = this.computeDragDistanceFromScrollForAnimation(scrollAreaStart, scrollAreaEnd, scrollDirection, animation)
             const drag = animation.distanceToProgress(dragDistance)
             const oldProgress = animation.progress
+            // console.info(`applying drag ${drag} to animation ${identifier}`)
             this.processAnimation(animation, drag)
             if (animation.progress !== oldProgress) {
                 animation.render(animation.progress, animation.domElements)
@@ -69,7 +68,7 @@ class ScrollAnimationEngine {
             return
         }
 
-        onFrameUpdate(this.animationRenderLoop)
+        sync.update(this.animationRenderLoop)
     }
 
     callProgressCallbacksIfNeeded(animation, scroll) {
@@ -117,16 +116,15 @@ class ScrollAnimationEngine {
     startAnimationLoop() {
         console.info('starting animation loop')
         // preparations
-        // this.lastTrackedScrollTimestamp = currentTime()
         if (this.scrollTimeout) clearTimeout(this.scrollTimeout)
 
         // start the loop!
-        onFrameUpdate(this.animationRenderLoop)
+        sync.update(this.animationRenderLoop)
         this.animating = true
     }
 
     stopAnimationLoop(nowTime) {
-        console.log('stopping animation loop')
+        console.info('stopping animation loop')
         if (this.scrolling) {
             // create timeout to catch scroll stop
             const elapsed = nowTime - this.lastTrackedScrollTimestamp
@@ -182,7 +180,6 @@ class ScrollAnimationEngine {
 
         const scrollYPos = window.pageYOffset
         const delta = scrollYPos - this.lastTrackedScrollPosition
-        console.log(delta, Math.sign)
         const direction = Math.sign(delta)
 
         // this is probably the initial scroll event
@@ -193,7 +190,7 @@ class ScrollAnimationEngine {
         let scrollAreaStart = direction === 1 ? this.lastTrackedScrollPosition : scrollYPos
         let scrollAreaEnd = direction === 1 ? scrollYPos : this.lastTrackedScrollPosition
         if (this.isScrollToReact(scrollAreaStart, scrollAreaEnd, direction)) {
-            this.lastTrackedScrollTimestamp = currentTime()
+            this.lastTrackedScrollTimestamp = Date.now();
             this.startAnimationLoop()
             return // the values will be processed in the animation loop instead
         }
@@ -206,12 +203,12 @@ class ScrollAnimationEngine {
     }
 
     onScrollStart() {
-        console.log('onScrollStart')
+        console.info('onScrollStart')
     }
 
 
     onScrollStop() {
-        console.log('onScrollStop')
+        console.info('onScrollStop')
         let start = false
         const scroll = window.pageYOffset
 
@@ -271,7 +268,7 @@ class ScrollAnimationEngine {
             window.addEventListener('scroll', this.onScroll)
         }
 
-        console.log(`getting dom references and initializing stylers for '${identifier}'`)
+        console.info(`getting dom references and initializing stylers for '${identifier}'`)
         const domElements = {}
         const elements = getDomElements()
         for (const identifier of Object.keys(elements)) {
@@ -314,7 +311,7 @@ class ScrollAnimationEngine {
         const progress = animation.snapOnStop ? Math.round(clampedProgress) : clampedProgress
         if (progress === 0) return
 
-        console.log('handling intitial scroll position')
+        console.info(`handling intitial scroll position of ${scroll}`)
         animation.progress = animation.targetProgress = progress
         this.callTargetProgressCallbacksIfNeeded(animation)
         this.callProgressCallbacksIfNeeded(animation, scroll)

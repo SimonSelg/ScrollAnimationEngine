@@ -154,8 +154,7 @@ function init() {
     engine.registerAnimation(headerHideAnimation)
 }
 
-//runAfterDomContentLoaded(() => setTimeout(init, 15))
-
-
-window.addEventListener('load', init);
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const IPHONE_TIMEOUT = 100
+runAfterDomContentLoaded(isIOS ? () => setTimeout(init, IPHONE_TIMEOUT) : init)
 
