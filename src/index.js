@@ -14,6 +14,8 @@ function lerp(value1, value2, amount) {
 class ScrollAnimationEngine {
     animating = false
     scrolling = false
+    onScrollStartCallbacks = []
+    onScrollStopCallbacks = []
     lastTrackedScrollPosition = window.pageYOffset
     lastTrackedScrollTimestamp = null
     scrollTimeout = null
@@ -204,6 +206,9 @@ class ScrollAnimationEngine {
 
     onScrollStart() {
         console.info('onScrollStart')
+        for (const callback of this.onScrollStartCallbacks) {
+            callback()
+        }
     }
 
 
@@ -235,6 +240,9 @@ class ScrollAnimationEngine {
         }
         if (start && !this.animating) {
             this.startAnimationLoop()
+        }
+        for (const callback of this.onScrollStopCallbacks) {
+            callback()
         }
     }
 
@@ -300,6 +308,14 @@ class ScrollAnimationEngine {
 
 
         this.handleInitialScrollPosition(this.animations.get(identifier))
+    }
+
+    registerOnScrollStartCallback(callback) {
+        this.onScrollStartCallbacks.push(callback)
+    }
+
+    registerOnScrollStopCallback(callback) {
+        this.onScrollStopCallbacks.push(callback)
     }
 
     handleInitialScrollPosition(animation) {

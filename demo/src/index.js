@@ -145,6 +145,15 @@ function runAfterDomContentLoaded(func) {
     }
 }
 
+function onScrollStart() {
+    console.log('demo onScrollStart')
+}
+
+
+function onScrollStop() {
+    console.log('demo onScrollStop')
+}
+
 function init() {
     console.log('init')
     engine.init()
@@ -152,6 +161,10 @@ function init() {
     console.log('dom content loaded',  Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop))
     engine.registerAnimation(headerAnimation)
     engine.registerAnimation(headerHideAnimation)
+
+    engine.registerOnScrollStartCallback(onScrollStart)
+    engine.registerOnScrollStopCallback(onScrollStop)
+
 }
 
 // on iOS, delay startup by IPHONE_TIMEOUT to be able to get the current scroll position
