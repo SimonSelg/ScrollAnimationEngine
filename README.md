@@ -8,5 +8,24 @@ Code is not yet as clean and well structured as I'd like to have it, but it work
 
 Let's see where this project goes.
 
+## Demo
 
-Demo: https://raw.githack.com/SimonSelg/ScrollAnimationEngine/master/demo/dist/index.html
+The engine includes a demo animation (the animation the engine was developed for) in `demo` folder. 
+
+Online demo: https://simonselg.github.io/ScrollAnimationEngine/
+
+## Development
+
+### Setup
+
+```bash
+# clone repo
+git clone git@github.com:SimonSelg/ScrollAnimationEngine.git && cd ScrollAnimationEngine
+# setup demo/dist subtree for gh-pages
+git worktree add demo/dist gh-pages
+```
+
+### Yarn/npm scripts
+- `yarn demo:start` starts the dev server
+- `yarn demo:build` builds the demo in demo/dist
+- `yarn demo:publish` publish demo to Github Pages

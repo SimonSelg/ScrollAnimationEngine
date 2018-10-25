@@ -30,7 +30,8 @@
   "scripts": {
     "build": "webpack --mode=production",
     "demo:build": "pushd demo; webpack --mode=production",
-    "demo:start": "pushd demo; webpack-dev-server --mode=development;popd"
+    "demo:start": "pushd demo; webpack-dev-server --mode=development;popd",
+    "demo:publish": "pushd demo/dist;git add --all && git commit -m 'Deploy to gh-pages' && git push origin gh-pages; popd"
   },
   "dependencies": {
     "framesync": "^3.1.9",
