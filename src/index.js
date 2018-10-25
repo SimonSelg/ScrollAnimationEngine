@@ -23,6 +23,10 @@ class ScrollAnimationEngine {
     scrollTimeout = null
     animations = new Map()
 
+    init () {
+        this.lastTrackedScrollPosition = window.pageYOffset
+    }
+
     animationRenderLoop = () => {
         const lastScroll = this.lastTrackedScrollPosition
         const scroll = window.pageYOffset
@@ -178,6 +182,7 @@ class ScrollAnimationEngine {
 
         const scrollYPos = window.pageYOffset
         const delta = scrollYPos - this.lastTrackedScrollPosition
+        console.log(delta, Math.sign)
         const direction = Math.sign(delta)
 
         // this is probably the initial scroll event
@@ -309,6 +314,7 @@ class ScrollAnimationEngine {
         const progress = animation.snapOnStop ? Math.round(clampedProgress) : clampedProgress
         if (progress === 0) return
 
+        console.log('handling intitial scroll position')
         animation.progress = animation.targetProgress = progress
         this.callTargetProgressCallbacksIfNeeded(animation)
         this.callProgressCallbacksIfNeeded(animation, scroll)

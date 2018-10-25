@@ -4,6 +4,7 @@ const cleanWebpackPlugin = require('clean-webpack-plugin')
 
 const babelRestSpreadPlugin = require('@babel/plugin-proposal-object-rest-spread')
 const babelClassPropertiesPlugin = require('@babel/plugin-proposal-class-properties')
+const runtimePlugin = require('@babel/plugin-transform-runtime')
 
 module.exports = {
     resolve: {
@@ -24,7 +25,12 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: ['@babel/preset-env'],
-                        plugins: [babelRestSpreadPlugin, babelClassPropertiesPlugin]
+                        plugins: [babelRestSpreadPlugin, babelClassPropertiesPlugin, [runtimePlugin, {
+                            "corejs": false,
+                            "helpers": true,
+                            "regenerator": false,
+                            "useESModules": false
+                        }]]
                     }
                 }
             }

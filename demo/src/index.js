@@ -63,10 +63,12 @@ const headerAnimation = {
     },
 
     animationTargetEndReached(scroll) {
+        console.log('animationTargetEndReached', scroll)
         headerEndY = scroll
     },
 
     animationEndReached(scroll, domElements) {
+        console.log('animationEndReached')
         domElements.lineTwo.styler.set({
             paddingRight: `${lineTwoRightPadding + logoWidth * logoTargetScale + 10}px`
         })
@@ -133,5 +135,27 @@ const headerHideAnimation = {
     }
 }
 
-engine.registerAnimation(headerAnimation)
-engine.registerAnimation(headerHideAnimation)
+function runAfterDomContentLoaded(func) {
+    if (document.readyState === "complete"
+        || document.readyState === "loaded"
+        || document.readyState === "interactive") {
+        func()
+    } else {
+        document.addEventListener("DOMContentLoaded", func)
+    }
+}
+
+function init() {
+    console.log('init')
+    engine.init()
+    console.log('window.pageYOffset', window.pageYOffset)
+    console.log('dom content loaded',  Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop))
+    engine.registerAnimation(headerAnimation)
+    engine.registerAnimation(headerHideAnimation)
+}
+
+//runAfterDomContentLoaded(() => setTimeout(init, 15))
+
+
+window.addEventListener('load', init);
+
