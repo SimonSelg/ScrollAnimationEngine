@@ -154,6 +154,7 @@ function init() {
     engine.registerAnimation(headerHideAnimation)
 }
 
+// on iOS, delay startup by IPHONE_TIMEOUT to be able to get the current scroll position
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const IPHONE_TIMEOUT = 100
 runAfterDomContentLoaded(isIOS ? () => setTimeout(init, IPHONE_TIMEOUT) : init)
