@@ -8,6 +8,30 @@ Code is not yet as clean and well structured as I'd like to have it, but it work
 
 Let's see where this project goes.
 
+## Requirements
+
+This project (and it's dependencies, especially popmotion) make use of some ES6 functionality that needs to be polyfilled in older Browsers:
+- Map
+- WeakSet
+- WeakMap
+- Math.sign
+- Symbol.iterator
+- Array.prototype.@@iterator
+
+
+You can polyfill it using polyfill.io:
+```html
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,WeakSet,WeakMap,Math.sign,Symbol.iterator,Array.prototype.@@iterator"></script>
+```
+
+## Todo:
+
+- I think we can use an array instead of an set for the animations
+- cleanup code
+- maybe a class is the wrong idea, since multiple instances don't really make sense
+- store dom references globally in the engine, not per animation
+    - currently, two animations can have the same dom references => duplicated objects
+
 ## Demo
 
 The engine includes a demo animation (the animation the engine was developed for) in `demo` folder. 

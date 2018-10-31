@@ -1,4 +1,3 @@
-import floatEqual from 'float-equal'
 import styler from 'stylefire'
 
 import sync from 'framesync'
