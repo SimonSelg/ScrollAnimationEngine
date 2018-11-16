@@ -10,7 +10,17 @@ function lerp(value1, value2, amount) {
     return (1 - amount) * value1 + amount * value2;
 }
 
+function isDomElement(element) {
+    return element instanceof Element || element instanceof HTMLDocument;
+}
+
+function devLog(message) {
+    if (__PRODUCTION__) return
+    console.info(`[scroll-animation-engine] ${message}`)
+}
+
 class ScrollAnimationEngine {
+    hasScrollHandler = false
     animating = false
     scrolling = false
     onScrollStartCallbacks = []
@@ -45,7 +55,7 @@ class ScrollAnimationEngine {
             this.lastTrackedScrollTimestamp = nowTime
         }
 
-        // console.info(`processing scroll delta of ${scrollDelta}, ${scroll}, ${lastScroll}`)
+        // devLog(`processing scroll delta of ${scrollDelta}, ${scroll}, ${lastScroll}`)
 
         // animations itself
         let scrollAreaStart = scrollDirection === 1 ? lastScroll : scroll
@@ -55,7 +65,7 @@ class ScrollAnimationEngine {
             const dragDistance = this.computeDragDistanceFromScrollForAnimation(scrollAreaStart, scrollAreaEnd, scrollDirection, animation)
             const drag = animation.distanceToProgress(dragDistance)
             const oldProgress = animation.progress
-            // console.info(`applying drag ${drag} to animation ${identifier}`)
+            // devLog(`applying drag ${drag} to animation ${identifier}`)
             this.processAnimation(animation, drag)
             if (animation.progress !== oldProgress) {
                 animation.render(animation.progress, animation.domElements)
@@ -73,8 +83,8 @@ class ScrollAnimationEngine {
     }
 
     callProgressCallbacksIfNeeded(animation, scroll) {
-        if (animation.animationStartReached && animation.progress === 0) animation.animationStartReached(scroll, animation.domElements)
-        if (animation.animationEndReached && animation.progress === 1) animation.animationEndReached(scroll, animation.domElements)
+        if (animation.animationStartReached && animation.progress === 0) animation.animationStartReached(scroll, animation.domElements, sync.postRender)
+        if (animation.animationEndReached && animation.progress === 1) animation.animationEndReached(scroll, animation.domElements, sync.postRender)
     }
 
     processAnimation(animation, drag) {
@@ -115,7 +125,7 @@ class ScrollAnimationEngine {
     }
 
     startAnimationLoop() {
-        console.info('starting animation loop')
+        devLog('starting animation loop')
         // preparations
         if (this.scrollTimeout) clearTimeout(this.scrollTimeout)
 
@@ -125,12 +135,12 @@ class ScrollAnimationEngine {
     }
 
     stopAnimationLoop(nowTime) {
-        console.info('stopping animation loop')
+        devLog('stopping animation loop')
         if (this.scrolling) {
             // create timeout to catch scroll stop
             const elapsed = nowTime - this.lastTrackedScrollTimestamp
             const remaining = 250 - elapsed
-            // console.info(`creating timeout to catch scroll stop, remaining are ${remaining}ms`)
+            // devLog(`creating timeout to catch scroll stop, remaining are ${remaining}ms`)
             this.scrollTimeout = setTimeout(this.setScrollingState, remaining, false)
         }
         this.animating = false
@@ -173,7 +183,7 @@ class ScrollAnimationEngine {
     }
 
     onScroll = () => {
-        // console.info('onScroll')
+        // devLog('onScroll')
 
         if (this.animating) {
             return
@@ -204,7 +214,7 @@ class ScrollAnimationEngine {
     }
 
     onScrollStart() {
-        console.info('onScrollStart')
+        devLog('onScrollStart')
         for (const callback of this.onScrollStartCallbacks) {
             callback()
         }
@@ -212,7 +222,7 @@ class ScrollAnimationEngine {
 
 
     onScrollStop() {
-        console.info('onScrollStop')
+        devLog('onScrollStop')
         let start = false
         const scroll = window.pageYOffset
 
@@ -225,12 +235,12 @@ class ScrollAnimationEngine {
                 const hasNotEnoughUpDragSpace = (animation.progress + possibleUpDrag) > 0
 
                 if (animation.progress < 0.5 || hasNotEnoughUpDragSpace) {
-                    console.info('snapping to 0%')
+                    devLog('snapping to 0%')
                     this.setTargetProgress(animation, 0)
                     // animation.targetProgress = 0
                 } else {
                     // todo: only snap if it's possible to reach 0% by scrolling up
-                    console.info('snapping to 100%')
+                    devLog('snapping to 100%')
                     this.setTargetProgress(animation, 1)
                     //animation.targetProgress = 1
                 }
@@ -265,26 +275,70 @@ class ScrollAnimationEngine {
         }
     }
 
+    registerScrollHandlerIfNeeded() {
+        if (this.hasScrollHandler) return
+        window.addEventListener('scroll', this.onScroll)
+        this.hasScrollHandler = true
+    }
+
     registerAnimation(animation) {
         const {identifier, lerpFactor, getDomElements, doInitialDomSetup, snapOnStop, distanceToProgress, scrollDownDragAreas, scrollUpDragAreas, render, animationTargetStartReached, animationTargetEndReached, animationEndReached, animationStartReached} = animation
-        console.info(`registering animation '${identifier}'`)
-        if (this.animations.size === 0) {
-            console.info(`registering scroll handler`)
-            // we don't want to catch the first initial scroll event (ie jump to last scroll position)
-            // this.runAfterDomContentLoaded(() => window.addEventListener('scroll', this.onScroll))
-            window.addEventListener('scroll', this.onScroll)
+        devLog(`registering animation '${identifier}'`)
+        this.registerScrollHandlerIfNeeded()
+
+        devLog(`getting dom references and initializing stylers for '${identifier}'`)
+
+        // add styler to all the dom nodes
+        // todo: store dom references not per animation, instead per engine
+        // todo: extract in own function, this just sucks
+
+        const stylifyDomObjects = (elements) => {
+            const result = {}
+            for (const identifier of Object.keys(elements)) {
+                const element = elements[identifier]
+                const res = handleElement(element)
+                if (res) {
+                    result[identifier] = res
+                }
+            }
+            return result
         }
 
-        console.info(`getting dom references and initializing stylers for '${identifier}'`)
-        const domElements = {}
-        const elements = getDomElements()
-        for (const identifier of Object.keys(elements)) {
-            const element = elements[identifier]
-            domElements[identifier] = {
-                element,
-                styler: styler(element)
+        const handleElement = (element) =>  {
+            if (isDomElement(element)) {
+                return {
+                    element,
+                    styler: styler(element)
+                }
+            } else if (element instanceof Array) {
+                return element.map(handleElement)
+            } else if (typeof element === 'object' && element !== null) {
+                return stylifyDomObjects(element)
             }
+            return null
         }
+
+        const domElements = stylifyDomObjects(getDomElements())
+
+        /*for (const identifier of Object.keys(elements)) {
+            const element = elements[identifier]
+
+            if (isDomElement(element)) {
+                domElements[identifier] = {
+                    element,
+                    styler: styler(element)
+                }
+            } else if (element instanceof Array) {
+                domElements[identifier] = []
+
+                for (const list_element of element) {
+                    domElements[identifier].push({
+                        element: list_element,
+                        styler: styler(list_element)
+                    })
+                }
+            }
+        }*/
 
         if (doInitialDomSetup) doInitialDomSetup(domElements)
 
@@ -311,10 +365,12 @@ class ScrollAnimationEngine {
 
     registerOnScrollStartCallback(callback) {
         this.onScrollStartCallbacks.push(callback)
+        this.registerScrollHandlerIfNeeded()
     }
 
     registerOnScrollStopCallback(callback) {
         this.onScrollStopCallbacks.push(callback)
+        this.registerScrollHandlerIfNeeded()
     }
 
     handleInitialScrollPosition(animation) {
@@ -326,7 +382,7 @@ class ScrollAnimationEngine {
         const progress = animation.snapOnStop ? Math.round(clampedProgress) : clampedProgress
         if (progress === 0) return
 
-        console.info(`handling intitial scroll position of ${scroll}`)
+        devLog(`handling intitial scroll position of ${scroll}`)
         animation.progress = animation.targetProgress = progress
         this.callTargetProgressCallbacksIfNeeded(animation)
         this.callProgressCallbacksIfNeeded(animation, scroll)

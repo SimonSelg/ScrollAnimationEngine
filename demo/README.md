@@ -1,3 +1,5 @@
-## Demo
+## Scroll Animation Engine Demo
 
-This should be the typical animated header that hides at some point demo.
+A header that shrinks to a smaller version when scrolling down.
+
+When scrolling even further down, it hides completely.

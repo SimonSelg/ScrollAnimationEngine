@@ -1,6 +1,6 @@
 # Scroll Animation Engine
 
-Engine to register performant animations that are driven (progress is dragged or progress change is triggered) by scroll.
+Engine to register animations that are driven by scroll. That means that animation progress is dragged or progress change is triggered by scroll.
 
 Originally part of an animated header which transitioned from a big state to a small state based on user scroll.
 
@@ -9,6 +9,8 @@ Code is not yet as clean and well structured as I'd like to have it, but it work
 Let's see where this project goes.
 
 ## Requirements
+
+Supports all major browsers, including IE11 and iOS Safari 8+
 
 This project (and it's dependencies, especially popmotion) make use of some ES6 functionality that needs to be polyfilled in older Browsers:
 - Map
@@ -49,25 +51,10 @@ git clone git@github.com:SimonSelg/ScrollAnimationEngine.git && cd ScrollAnimati
 git worktree add demo/dist gh-pages
 ```
 
-Currently the library `stylefire` has a bug: https://github.com/Popmotion/popmotion/pull/588
-
-To fix it until my PR is merged:
-
-```bash
-# clone my fork
-git clone git@github.com:SimonSelg/popmotion.git
-cd popmotion
-# build and linke framesync
-cd packages/framesync && yarn build && yarn link 
-# build and link stylefire
-cd ../stylefire && yarn build && yarn link
-
-# make ScrollAnimationEngine use our build
-cd <ScrollAnimationEngine folder>
-yarn link framesync stylefire
-```
 
 ### Yarn/npm scripts
+- `yarn build` builds the library
+- `yarn clean` clean build artifacts
 - `yarn demo:start` starts the dev server
 - `yarn demo:build` builds the demo in demo/dist
 - `yarn demo:publish` publish demo to Github Pages

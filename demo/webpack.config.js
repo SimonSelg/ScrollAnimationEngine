@@ -1,10 +1,9 @@
 const path = require('path')
+const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const cleanWebpackPlugin = require('clean-webpack-plugin')
 
-const babelRestSpreadPlugin = require('@babel/plugin-proposal-object-rest-spread')
-const babelClassPropertiesPlugin = require('@babel/plugin-proposal-class-properties')
-const runtimePlugin = require('@babel/plugin-transform-runtime')
+const babelOptions = require('../.babelrc')
 
 module.exports = {
     resolve: {
@@ -23,25 +22,20 @@ module.exports = {
                 exclude: /(node_modules|bower_components)/,
                 use: {
                     loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env'],
-                        plugins: [babelRestSpreadPlugin, babelClassPropertiesPlugin, [runtimePlugin, {
-                            "corejs": false,
-                            "helpers": true,
-                            "regenerator": false,
-                            "useESModules": false
-                        }]]
-                    }
+                    options: babelOptions,
                 }
             }
         ]
     },
     plugins: [
-      new HtmlWebpackPlugin({
+        new HtmlWebpackPlugin({
           template: 'src/index.html',
           title: 'Scroll Animation Engine Demo'
-      }),
-      new cleanWebpackPlugin()
+        }),
+        new cleanWebpackPlugin(),
+        new webpack.DefinePlugin({
+            __PRODUCTION__: JSON.stringify(process.env.NODE_ENV === 'production')
+        }),
     ],
     devServer: {
         disableHostCheck: true,

@@ -3,37 +3,46 @@
   "version": "0.0.1",
   "description": "Engine to register performant animations that are driven by scroll",
   "main": "lib/scroll-animation-engine.js",
+  "module": "es/scroll-animation-engine.js",
   "repository": "git@github.com:SimonSelg/ScrollAnimationEngine.git",
   "author": "Simon Selg",
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@babel/core": "^7.0.0",
+    "@babel/core": "^7.1.6",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/runtime": "^7.1.2",
+    "@babel/preset-env": "^7.1.6",
     "babel-loader": "^8.0.2",
-    "clean-webpack-plugin": "^0.1.19",
+    "clean-webpack-plugin": "^1.0.0",
     "float-equal": "^1.0.0",
+    "framesync": "^4.0.1",
     "html-webpack-plugin": "^3.2.0",
     "postcss-loader": "^3.0.0",
-    "postcss-nesting": "^6.0.0",
-    "postcss-preset-env": "^6.2.0",
+    "postcss-nesting": "^7.0.0",
+    "postcss-preset-env": "^6.4.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.67.1",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-replace": "^2.1.0",
     "style-loader": "^0.23.0",
-    "webpack": "^4.17.1",
+    "webpack": "^4.25.1",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.7"
   },
   "scripts": {
-    "build": "webpack --mode=production",
-    "demo:build": "pushd demo; webpack --mode=production",
+    "clean": "rimraf lib dist es",
+    "build": "env NODE_ENV='production' rollup -c",
+    "demo:build": "pushd demo; env NODE_ENV='production' webpack --mode=development",
     "demo:start": "pushd demo; webpack-dev-server --mode=development;popd",
     "demo:publish": "pushd demo/dist;git add --all && git commit -m 'Deploy to gh-pages' && git push origin gh-pages; popd"
   },
   "dependencies": {
+    "@babel/runtime": "^7.1.5"
+  },
+  "peerDependencies": {
     "framesync": "^4.0.1",
-    "stylefire": "^2.1.0"
+    "stylefire": "^2.2.1"
   }
 }

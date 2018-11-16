@@ -20,13 +20,19 @@ header {
         transform-origin: left top;
 
         & a {
-            height: 85px;
+            text-decoration: none;
+            color: white;
             padding: 10px;
             display:  inline-block;
 
-            & img {
-                height: 100%;
-                width: auto;
+            & .logo {
+                height: 65px;
+                width: 200px;
+                border: 1px dotted black;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
         }
     }
@@ -68,10 +74,17 @@ main {
         linear-gradient(135deg, #708090 22px, #d9ecff 22px, #d9ecff 24px, transparent 24px, transparent 67px, #d9ecff 67px, #d9ecff 69px, transparent 69px),
         linear-gradient(225deg, #708090 22px, #d9ecff 22px, #d9ecff 24px, transparent 24px, transparent 67px, #d9ecff 67px, #d9ecff 69px, transparent 69px)0 64px;
     background-color:#708090;
-    background-size: 64px 128px
+    background-size: 64px 128px;
+
+    padding-top: 20px;
+    text-align: center;
 }
 
 footer {
     height: 200px;
     background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

@@ -1,10 +1,6 @@
-'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/esm/defineProperty'));
-var styler = _interopDefault(require('stylefire'));
-var sync = _interopDefault(require('framesync'));
+import _defineProperty from '@babel/runtime/helpers/esm/defineProperty';
+import styler from 'stylefire';
+import sync from 'framesync';
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -526,4 +522,4 @@ function () {
   return ScrollAnimationEngine;
 }();
 
-module.exports = ScrollAnimationEngine;
+export default ScrollAnimationEngine;

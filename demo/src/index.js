@@ -1,4 +1,4 @@
-import ScrollAnimationEngine from '../../'
+import ScrollAnimationEngine from '../../src/index.js' // 'scroll-animation-engine'
 import './styles.css'
 
 const engine = new ScrollAnimationEngine()
@@ -26,6 +26,7 @@ const headerAnimation = {
         const logoContainer = header.getElementsByClassName("logo-container")[0]
         const lineTwo = header.getElementsByClassName("header-line-two")[0]
         const span = lineTwo.getElementsByTagName('span')[0]
+
         return { header, logoContainer, lineTwo, span }
     },
 
@@ -62,8 +63,15 @@ const headerAnimation = {
         }]
     },
 
+    animationTargetStartReached(scroll) {
+        console.log('animationTargetStartReached', scroll)
+
+        headerEndY = null
+    },
+
     animationTargetEndReached(scroll) {
         console.log('animationTargetEndReached', scroll)
+
         headerEndY = scroll
     },
 
@@ -167,11 +175,9 @@ function init() {
 
 }
 
-/*
+
 
 // on iOS, delay startup by IPHONE_TIMEOUT to be able to get the current scroll position
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const IPHONE_TIMEOUT = 100
 runAfterDomContentLoaded(isIOS ? () => setTimeout(init, IPHONE_TIMEOUT) : init)
-
-*/
