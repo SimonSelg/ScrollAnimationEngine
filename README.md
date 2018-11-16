@@ -28,6 +28,7 @@ You can polyfill it using polyfill.io:
 
 ## Todo:
 
+- Debug Log statements are still included in production bundle, DCE not working good enough to catch them
 - I think we can use an array instead of an set for the animations
 - cleanup code
 - maybe a class is the wrong idea, since multiple instances don't really make sense
