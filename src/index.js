@@ -308,7 +308,9 @@ class ScrollAnimationEngine {
             if (isDomElement(element)) {
                 return {
                     element,
-                    styler: styler(element)
+                    styler: styler(element, {
+                        preparseOutput: false
+                    })
                 }
             } else if (element instanceof Array) {
                 return element.map(handleElement)

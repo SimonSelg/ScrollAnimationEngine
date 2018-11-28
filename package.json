@@ -1,6 +1,6 @@
 {
   "name": "scroll-animation-engine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Engine to register performant animations that are driven by scroll",
   "main": "lib/scroll-animation-engine.js",
   "module": "es/scroll-animation-engine.js",
